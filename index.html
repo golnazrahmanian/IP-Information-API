@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            background: url(img/galaxy.jpg) no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            
+
+        }
+
+        h1 {
+            text-align: center;
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        #list {
+            width: 500px;
+            padding: 10px;
+            border: 2px solid rgb(255, 255, 255);
+            margin: 20px auto;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .art {
+            width: 100%;
+            height: 200px;
+            border-bottom: 1px solid rgb(59, 59, 59);
+            padding: 10px;
+            display: flex;
+
+            >figure {
+                width: 40%;
+
+                >img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+            }
+
+            >div {
+                width: 60%;
+                padding-left: 20px;
+            }
+        }
+
+        button {
+            width: 100%;
+            height: 100px;
+        }
+    </style>
+</head>
+
+<body onload="getData()">
+    <h1>IP Information</h1>
+    <div id="list"></div>
+    <div id="map"></div>
+
+
+    <script>
+        function getData() {
+
+            //////////////
+            document.getElementById('list').innerHTML = ''
+
+
+            fetch('https://api.ipify.org/?format=json')
+                .then(res => res.json())
+                .then(val => {
+                    fetch('https://api.ipbase.com/v2/info?apikey=ipb_live_1U4D5KGiz4QYRa6lWSc0vV9xSxqOF74An5Jl1y5y&ip=' + val.ip)
+                        .then(res => res.json())
+                        .then(val => val.data)
+                        .then(val => {
+                            document.getElementById('list').innerHTML += `
+                            <div>
+                                <h3>Your IP: ${val.ip}</h3>
+                                <h3>Country: ${val.location.country.name} ${val.location.country.emoji}</h3>
+                                <h3>Language: ${val.location.country.languages[0].name}</h3>
+                                <h3>Currency: ${val.location.country.currencies[0].name}</h3>
+                                <h3>Currency: ${val.timezone.current_time}</h3>
+                                <h3>Region Name: ${val.location.region.name}</h3>
+                                <h3>City: ${val.location.city.name}</h3>
+                                <h3>ISP: ${val.connection.isp}</h3>
+                            </div>
+                        `
+                            document.getElementById('map').innerHTML += `
+                            <iframe src="https://maps.google.com/maps?q=${val.location.latitude},${val.location.longitude}&hl=es&z=14&amp;output=embed" width="500" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            `
+                        })
+                })
+
+        }
+    </script>
+</body>
+
+</html>
